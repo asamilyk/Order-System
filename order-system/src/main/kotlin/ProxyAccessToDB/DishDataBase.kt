@@ -1,6 +1,7 @@
 package ProxyAccessToDB
 
 import Dish
+import ProxyAccessToDB.ServiceInterface
 
 class DishDataBase: ServiceInterface {
     var dishes = mutableListOf<Dish>()
