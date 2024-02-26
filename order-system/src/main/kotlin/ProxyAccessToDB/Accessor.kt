@@ -62,4 +62,7 @@ class Accessor(private var realService : DishDataBase, var role : Role) : Servic
             logger.writeMessageChange(false)
         }
     }
+    override fun chooseDish(){
+
+    }
 }

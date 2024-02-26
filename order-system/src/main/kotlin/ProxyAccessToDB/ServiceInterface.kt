@@ -4,6 +4,7 @@ import Dish
 
 interface ServiceInterface {
     fun getListOfDishes()
+    fun chooseDish()
     fun addDish()
     fun removeDish()
     fun changePrice()

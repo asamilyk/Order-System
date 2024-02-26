@@ -9,6 +9,9 @@ class DishDataBase: ServiceInterface {
     var dishes = mutableListOf<Dish>()
     val scanner = Scanner(System.`in`)
 
+    override fun chooseDish(){
+
+    }
     override fun getListOfDishes() {
         val listOfDishes = db.getListOdDishes()
         println("Список блюд:")

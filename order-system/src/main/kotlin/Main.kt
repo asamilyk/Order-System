@@ -78,17 +78,25 @@ fun mainMenu(user: User) {
     val accessor = Accessor(dishDataBase, user.role)
     var exit = true;
     while (exit) {
-        println("1. Добавить блюдо")
-        println("2. Удалить блюдо")
-        println("3. Поменять параметр существующего блюда")
-
-        println("6. Выход")
+        println("1. Выбрать блюдо")
+        if (user.role == Role.Admin) {
+            println("2. Добавить блюдо")
+            println("3. Удалить блюдо")
+            println("4. Поменять цену существующего блюда")
+            println("5. Поменять количество существующего блюда")
+            println("6. Поменять сложность существующего блюда")
+            println("7. Выход")
+        }
         println("Выберите действие:")
+
         when (scanner.nextInt()) {
-            1 -> accessor.addDish()
-            2 -> accessor.removeDish()
-            3 -> accessor.changeNumber()
-            6 -> exit = false;
+            1 -> accessor.chooseDish()
+            2 -> accessor.addDish()
+            3 -> accessor.removeDish()
+            4 -> accessor.changePrice()
+            5 -> accessor.changeNumber()
+            6 -> accessor.changeComplexity()
+            7 -> exit = false;
             else -> println("Некорректный выбор. Попробуйте снова.")
         }
     }
