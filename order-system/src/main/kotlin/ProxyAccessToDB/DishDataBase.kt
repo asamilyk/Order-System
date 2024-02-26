@@ -1,48 +1,85 @@
 package ProxyAccessToDB
 
+import DataBaseService
 import Dish
-import ProxyAccessToDB.ServiceInterface
+import java.util.*
 
 class DishDataBase: ServiceInterface {
+    var db = DataBaseService()
     var dishes = mutableListOf<Dish>()
+    val scanner = Scanner(System.`in`)
 
-    override fun getListOfDishes(): List<Dish> {
-        return dishes;
+    override fun getListOfDishes() {
+        val listOfDishes = db.getListOdDishes()
+        println("Список блюд:")
+        if (listOfDishes != null) {
+            for(dish in listOfDishes){
+                println(dish)
+            }
+        }
+
     }
 
-    override fun addDish(dish:Dish) {
-        dishes.add(dish)
+    override fun addDish() {
+        println("Введите название блюда")
+        val name = scanner.next()
+        println("Введите количество для блюда")
+        val number = scanner.nextInt()
+        println("Введите цену для блюда")
+        val price = scanner.nextFloat()
+        println("Введите сложность для блюда")
+        val complexity = scanner.nextInt()
+        db.addDish(Dish(name, number, price, complexity))
     }
 
-    override fun removeDish(id: Int) {
+    override fun removeDish() {
+        println("Введите номер блюда для удаления")
+        getListOfDishes()
+        val id = scanner.nextInt()
         if (id < dishes.size) {
-            dishes.removeAt(id-1)
+            db.removeDish(id)
         } else {
             throw Exception("no element with this id")
         }
     }
 
-    override fun changePrice(id:Int, price:Float){
+    override fun changePrice(){
+        println("Введите номер блюда для изменения цены")
+        getListOfDishes()
+        val id = scanner.nextInt()
+        println("Введите новую цену для блюда")
+        getListOfDishes()
+        val price = scanner.nextFloat()
         if (id < dishes.size) {
-            dishes[id-1].Price = price
+            db.changePrice(id, price)
         } else {
             throw Exception("no dish with this id")
         }
     }
-    override fun changeComplexity(id:Int, complexity:Int){
+    override fun changeComplexity(){
+        println("Введите номер блюда для изменения сложности приготовления")
+        getListOfDishes()
+        val id = scanner.nextInt()
+        println("Введите новую сложность для блюда")
+        getListOfDishes()
+        val complexity = scanner.nextInt()
         if (id < dishes.size) {
-            dishes[id-1].Complexity = complexity;
+            db.changeComplexity(id, complexity)
         } else {
             throw Exception("no dish with this id")
         }
     }
-    override fun changeNumber(id:Int, number:Int){
+    override fun changeNumber(){
+        println("Введите номер блюда для изменения количества")
+        getListOfDishes()
+        val id = scanner.nextInt()
+        println("Введите новое количество для блюда")
+        getListOfDishes()
+        val number = scanner.nextInt()
         if (id < dishes.size) {
-            dishes[id-1].Number = number;
+            db.changeNumber(id, number)
         } else {
             throw Exception("no dish with this id")
         }
     }
-
-
 }

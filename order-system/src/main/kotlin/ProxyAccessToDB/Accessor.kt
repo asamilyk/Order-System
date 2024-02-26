@@ -1,6 +1,7 @@
 package ProxyAccessToDB
 
 import Dish
+import java.util.*
 
 class Accessor(private var realService : DishDataBase, var role : Role) : ServiceInterface {
     var logger = Logger()
@@ -12,53 +13,53 @@ class Accessor(private var realService : DishDataBase, var role : Role) : Servic
         return false
     }
 
-    override fun getListOfDishes():List<Dish> {
+    override fun getListOfDishes() {
         logger.writeMessageGet()
-        return realService.getListOfDishes()
+        realService.getListOfDishes()
     }
 
-    override fun addDish(dish:Dish) {
+    override fun addDish() {
         if (checkAccess(role)) {
-            logger.writeMessageAdd(realService.dishes.size, dish.Name, true)
-            realService.addDish(dish)
+            logger.writeMessageAdd(true)
+            realService.addDish()
         } else {
-            logger.writeMessageAdd(realService.dishes.size, dish.Name,false)
+            logger.writeMessageAdd(false)
         }
     }
 
-    override fun removeDish(id: Int) {
+    override fun removeDish() {
         if (checkAccess(role)) {
-            logger.writeMessageRemove(id, true)
-            realService.removeDish(id)
+            logger.writeMessageRemove(true)
+            realService.removeDish()
         } else {
-            logger.writeMessageRemove(id, false)
+            logger.writeMessageRemove( false)
         }
     }
 
-    override fun changePrice(id: Int, price: Float) {
+    override fun changePrice() {
         if (checkAccess(role)) {
-            logger.writeMessageChange(id, true)
-            realService.dishes[id].Price = price;
+            logger.writeMessageChange(true)
+            realService.changePrice();
         } else {
-            logger.writeMessageChange(id, false)
+            logger.writeMessageChange(false)
         }
     }
 
-    override fun changeComplexity(id: Int, complexity: Int) {
+    override fun changeComplexity() {
         if (checkAccess(role)) {
-            logger.writeMessageChange(id, true)
-            realService.dishes[id].Complexity = complexity
+            logger.writeMessageChange(true)
+            realService.changeComplexity()
         } else {
-            logger.writeMessageChange(id, false)
+            logger.writeMessageChange(false)
         }
     }
 
-    override fun changeNumber(id: Int, number: Int) {
+    override fun changeNumber() {
         if (checkAccess(role)) {
-            logger.writeMessageChange(id, true)
-            realService.dishes[id].Number = number
+            logger.writeMessageChange(true)
+            realService.changeNumber()
         } else {
-            logger.writeMessageChange(id, false)
+            logger.writeMessageChange(false)
         }
     }
 }

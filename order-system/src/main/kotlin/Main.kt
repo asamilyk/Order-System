@@ -1,5 +1,7 @@
 import AuthorizationSystem.User
 import AuthorizationSystem.UserDatabase
+import ProxyAccessToDB.Accessor
+import ProxyAccessToDB.DishDataBase
 import ProxyAccessToDB.Role
 import java.util.*
 import kotlin.system.exitProcess
@@ -48,7 +50,7 @@ fun register(userDatabase: UserDatabase, scanner: Scanner) {
     println("Пользователь успешно зарегистрирован.")
 }
 
-fun startAuthentification():User{
+fun startAuthentification(): User {
     val userDatabase = UserDatabase()
 
     val scanner = Scanner(System.`in`)
@@ -66,13 +68,35 @@ fun startAuthentification():User{
             else -> println("Некорректный выбор. Попробуйте снова.")
         }
     }
+    println("Вы вошли как ${loggedInUser.username}. Тип пользователя - ${if (loggedInUser.role == Role.Visitor) "Посетитель" else "Администратор"}")
     return loggedInUser;
 }
 
+fun mainMenu(user: User) {
+    val scanner = Scanner(System.`in`)
+    val dishDataBase = DishDataBase()
+    val accessor = Accessor(dishDataBase, user.role)
+    var exit = true;
+    while (exit) {
+        println("1. Добавить блюдо")
+        println("2. Удалить блюдо")
+        println("3. Поменять параметр существующего блюда")
+
+        println("6. Выход")
+        println("Выберите действие:")
+        when (scanner.nextInt()) {
+            1 -> accessor.addDish()
+            2 -> accessor.removeDish()
+            3 -> accessor.changeNumber()
+            6 -> exit = false;
+            else -> println("Некорректный выбор. Попробуйте снова.")
+        }
+    }
+    return;
+}
 
 fun main(args: Array<String>) {
     val user = startAuthentification()
-
-    println("Вы вошли как ${user.username}. Тип пользователя - ${if (user.role == Role.Visitor) "Посетитель" else "Администратор" }")
+    mainMenu(user);
 
 }
