@@ -1,8 +1,9 @@
 package AuthorizationSystem
 
 import ProxyAccessToDB.Role
+import kotlinx.serialization.Serializable
 import java.security.MessageDigest
-
+@Serializable
 class User(val username: String, var passwordHash: String, val role: Role) {
     fun setPassword(password: String) {
         passwordHash = encryptPassword(password)
