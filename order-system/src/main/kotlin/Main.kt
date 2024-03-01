@@ -4,7 +4,6 @@ import ProxyAccessToDB.Accessor
 import ProxyAccessToDB.DishDataBase
 import ProxyAccessToDB.Role
 import java.util.*
-import kotlin.system.exitProcess
 
 fun login(userDatabase: UserDatabase, scanner: Scanner): User? {
     println("Введите логин:")
@@ -50,32 +49,32 @@ fun register(userDatabase: UserDatabase, scanner: Scanner) {
     println("Пользователь успешно зарегистрирован.")
 }
 
-fun startAuthentification(): User {
+fun startAuthentification() {
     val userDatabase = UserDatabase()
     val usersFilePath = "movies.json"
     userDatabase.loadUserData(usersFilePath)
     val scanner = Scanner(System.`in`)
     var loggedInUser: User? = null
-
-    while (loggedInUser == null) {
+    var exit = true
+    while (exit) {
         println("1. Вход")
         println("2. Регистрация")
         println("3. Выход")
         println("Выберите действие:")
         when (scanner.nextInt()) {
-            1 -> loggedInUser = login(userDatabase, scanner)
-            2 -> register(userDatabase, scanner)
-            3 -> {
-                userDatabase.saveUserData(usersFilePath)
-                exitProcess(0)
+            1 -> {
+                loggedInUser = login(userDatabase, scanner)
+                if (loggedInUser != null) {
+                    mainMenu(loggedInUser)
+                }
             }
 
+            2 -> register(userDatabase, scanner)
+            3 -> exit = false;
             else -> println("Некорректный выбор. Попробуйте снова.")
         }
     }
     userDatabase.saveUserData(usersFilePath)
-    println("Вы вошли как ${loggedInUser.username}. Тип пользователя - ${if (loggedInUser.role == Role.Visitor) "Посетитель" else "Администратор"}")
-    return loggedInUser;
 }
 
 fun mainMenu(user: User) {
@@ -91,8 +90,8 @@ fun mainMenu(user: User) {
             println("4. Поменять цену существующего блюда")
             println("5. Поменять количество существующего блюда")
             println("6. Поменять сложность существующего блюда")
-            println("7. Выход")
         }
+        println("7. Выход")
         println("Выберите действие:")
 
         when (scanner.nextInt()) {
@@ -110,8 +109,7 @@ fun mainMenu(user: User) {
 }
 
 fun main(args: Array<String>) {
-    val user = startAuthentification()
-    mainMenu(user);
+    startAuthentification()
 
 
 }
