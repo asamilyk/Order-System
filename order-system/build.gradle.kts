@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.serialization") version "1.9.22"
     application
 }
 
@@ -8,13 +9,13 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-    implementation("org.mindrot:jbcrypt:0.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("de.nycode:bcrypt:2.2.0")
 }
+
 
 tasks.test {
     useJUnitPlatform()

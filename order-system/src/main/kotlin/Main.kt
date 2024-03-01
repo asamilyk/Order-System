@@ -52,7 +52,8 @@ fun register(userDatabase: UserDatabase, scanner: Scanner) {
 
 fun startAuthentification(): User {
     val userDatabase = UserDatabase()
-
+    val usersFilePath = "movies.json"
+    userDatabase.loadUserData(usersFilePath)
     val scanner = Scanner(System.`in`)
     var loggedInUser: User? = null
 
@@ -64,10 +65,15 @@ fun startAuthentification(): User {
         when (scanner.nextInt()) {
             1 -> loggedInUser = login(userDatabase, scanner)
             2 -> register(userDatabase, scanner)
-            3 -> exitProcess(0)
+            3 -> {
+                userDatabase.saveUserData(usersFilePath)
+                exitProcess(0)
+            }
+
             else -> println("Некорректный выбор. Попробуйте снова.")
         }
     }
+    userDatabase.saveUserData(usersFilePath)
     println("Вы вошли как ${loggedInUser.username}. Тип пользователя - ${if (loggedInUser.role == Role.Visitor) "Посетитель" else "Администратор"}")
     return loggedInUser;
 }
@@ -106,5 +112,6 @@ fun mainMenu(user: User) {
 fun main(args: Array<String>) {
     val user = startAuthentification()
     mainMenu(user);
+
 
 }
