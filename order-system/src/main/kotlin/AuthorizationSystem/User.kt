@@ -9,4 +9,8 @@ class User(val username: String, var passwordHash: String, val role: Role) {
     fun checkPassword(password: String): Boolean {
         return BCrypt.checkpw(password, passwordHash)
     }
+
+
+
+
 }
