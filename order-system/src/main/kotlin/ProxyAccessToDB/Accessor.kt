@@ -1,7 +1,6 @@
 package ProxyAccessToDB
 
-import Dish
-import java.util.*
+import AuthorizationSystem.User
 
 class Accessor(private var realService : DishDataBase, var role : Role) : ServiceInterface {
     var logger = Logger()
@@ -62,7 +61,10 @@ class Accessor(private var realService : DishDataBase, var role : Role) : Servic
             logger.writeMessageChange(false)
         }
     }
-    override fun chooseDish(){
-
+    override fun createOrder(user: User){
+        realService.createOrder(user)
+    }
+    override fun checkCurrentOrders(user: User){
+        realService.checkCurrentOrders(user)
     }
 }

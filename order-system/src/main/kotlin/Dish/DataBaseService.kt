@@ -1,7 +1,9 @@
+package Dish
+
 class DataBaseService() {
 
     var dishes = mutableListOf<Dish>()
-    fun getListOdDishes(): List<Dish>? {
+    fun getListOfDishes(): List<Dish> {
         return dishes;
     }
 
@@ -24,6 +26,5 @@ class DataBaseService() {
     fun changeComplexity(id: Int, complexity: Int) {
         dishes[id-1].Complexity = complexity
     }
-
 
 }

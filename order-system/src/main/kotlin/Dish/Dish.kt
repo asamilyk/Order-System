@@ -1,3 +1,5 @@
+package Dish
+
 class Dish(name: String, number: Int, price: Float, complexity: Int) {
     var Name: String = name
     var Number: Int = number
