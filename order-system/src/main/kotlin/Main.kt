@@ -1,8 +1,10 @@
+
 import AuthorizationSystem.User
 import AuthorizationSystem.UserDatabase
+import Dish.Dish
 import ProxyAccessToDB.Accessor
-import ProxyAccessToDB.DishDataBase
 import ProxyAccessToDB.Role
+import ProxyAccessToDB.Service
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -58,6 +60,11 @@ fun startAuthentification(executorService: ExecutorService) {
     val scanner = Scanner(System.`in`)
     var loggedInUser: User? = null
     var exit = true
+
+    var user = User("1", "1", Role.Visitor)
+    user.setPassword("1")
+    userDatabase.addUser(user)
+
     while (exit) {
         println("1. Вход")
         println("2. Регистрация")
@@ -81,9 +88,13 @@ fun startAuthentification(executorService: ExecutorService) {
 
 fun mainMenu(user: User, executorService: ExecutorService) {
     val scanner = Scanner(System.`in`)
-    val dishDataBase = DishDataBase()
+    val dishDataBase = Service()
     val accessor = Accessor(dishDataBase, user.role)
     var exit = true;
+    var dish1 = Dish("a", 1, 1.0f, 1)
+    var dish2 = Dish("b", 1, 1.0f, 1)
+    dishDataBase.dishDb.dishes.add(dish1)
+    dishDataBase.dishDb.dishes.add(dish2)
     while (exit) {
         println("1. Создать заказ")
         println("2. Действия с существующими заказами")

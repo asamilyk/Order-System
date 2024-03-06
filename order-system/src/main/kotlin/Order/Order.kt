@@ -8,13 +8,19 @@ class Order(dishes: MutableList<Dish>, status: OrderStatus, user: User) {
     var Status: OrderStatus = status
     var User: User = user
     fun cooking(){
-        Thread.sleep((1000*Dishes.size).toLong());
+        Thread.sleep((10000*Dishes.size).toLong());
         Status = OrderStatus.preparing
-        Thread.sleep((1000*Dishes.size).toLong());
+        Thread.sleep((10000*Dishes.size).toLong());
         Status = OrderStatus.ready
     }
     override fun toString(): String {
-        return "Статус: $Status, блюда:\n ${Dishes.forEach { it.toString() }}"
+        var str = "Статус: $Status, блюда:\n";
+        var i = 1
+        for(dish in Dishes){
+            str += "$i. ${dish}+\n"
+            i++
+        }
+        return str
     }
 
 }

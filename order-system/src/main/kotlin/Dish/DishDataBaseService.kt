@@ -2,9 +2,9 @@ package Dish
 
 class DishDataBaseService() {
 
-    private var dishes = mutableListOf<Dish>()
+    var dishes = mutableListOf<Dish>()
     fun getListOfDishes(): List<Dish> {
-        return dishes;
+        return dishes
     }
 
     fun addDish(dish: Dish) {

@@ -3,7 +3,7 @@ package ProxyAccessToDB
 import AuthorizationSystem.User
 import java.util.concurrent.ExecutorService
 
-class Accessor(private var realService : DishDataBase, var role : Role) : ServiceInterface {
+class Accessor(private var realService : Service, var role : Role) : ServiceInterface {
     var logger = Logger()
 
     fun checkAccess(role : Role) : Boolean {

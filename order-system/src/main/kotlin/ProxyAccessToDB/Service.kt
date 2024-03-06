@@ -9,7 +9,7 @@ import Order.OrderStatus
 import java.util.*
 import java.util.concurrent.ExecutorService
 
-class DishDataBase() : ServiceInterface {
+class Service() : ServiceInterface {
     var dishDb = DishDataBaseService()
     var orderDb = OrderDataBase()
     val scanner = Scanner(System.`in`)
@@ -22,8 +22,8 @@ class DishDataBase() : ServiceInterface {
         println("Введите номера блюд, которые вы хотите добавить в заказ")
         for(i in 1..number){
             val id = scanner.nextInt()
-            if (id < dishDb.getListOfDishes().size){
-                curDishes.add(dishDb.getListOfDishes()[id])
+            if (id <= dishDb.getListOfDishes().size){
+                curDishes.add(dishDb.getListOfDishes()[id-1])
             }
             else{
                 throw Exception("no dish with this id")
@@ -41,10 +41,13 @@ class DishDataBase() : ServiceInterface {
 
     override fun checkCurrentOrders(user: User) {
         println("Список ваших заказов:")
+        var i = 1
         for(order in orderDb.getListOfOrders()){
             if (order.User == user){
+                print("$i. ")
                 println(order)
             }
+            i++
         }
         var exit = true;
         while (exit) {
@@ -65,8 +68,11 @@ class DishDataBase() : ServiceInterface {
         val listOfDishes = dishDb.getListOfDishes()
         println("Список блюд:")
 
+        var i = 1
         for (dish in listOfDishes) {
+            print("$i. ")
             println(dish)
+            i++
         }
     }
 
