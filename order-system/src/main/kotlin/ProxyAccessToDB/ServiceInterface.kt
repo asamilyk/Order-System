@@ -1,6 +1,7 @@
 package ProxyAccessToDB
 
 import AuthorizationSystem.User
+import java.util.concurrent.ExecutorService
 
 interface ServiceInterface {
     fun getListOfDishes()
@@ -9,6 +10,6 @@ interface ServiceInterface {
     fun changePrice()
     fun changeComplexity()
     fun changeNumber()
-    fun createOrder(user: User)
+    fun createOrder(user: User, executorService: ExecutorService)
     fun checkCurrentOrders(user: User)
 }

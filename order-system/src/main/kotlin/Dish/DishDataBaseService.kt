@@ -1,8 +1,8 @@
 package Dish
 
-class DataBaseService() {
+class DishDataBaseService() {
 
-    var dishes = mutableListOf<Dish>()
+    private var dishes = mutableListOf<Dish>()
     fun getListOfDishes(): List<Dish> {
         return dishes;
     }

@@ -1,18 +1,20 @@
 package ProxyAccessToDB
 
 import AuthorizationSystem.User
-import Dish.DataBaseService
 import Dish.Dish
+import Dish.DishDataBaseService
 import Order.Order
+import Order.OrderDataBase
+import Order.OrderStatus
 import java.util.*
+import java.util.concurrent.ExecutorService
 
 class DishDataBase() : ServiceInterface {
-    var db = DataBaseService()
-    var dishes = mutableListOf<Dish>()
-    var orders = mutableListOf<Order>()
+    var dishDb = DishDataBaseService()
+    var orderDb = OrderDataBase()
     val scanner = Scanner(System.`in`)
 
-    override fun createOrder(user: User) {
+    override fun createOrder(user: User,executorService: ExecutorService) {
         getListOfDishes()
         val curDishes = mutableListOf<Dish>()
         println("Введите количество блюд, которое вы хотите добавить в заказ")
@@ -20,32 +22,52 @@ class DishDataBase() : ServiceInterface {
         println("Введите номера блюд, которые вы хотите добавить в заказ")
         for(i in 1..number){
             val id = scanner.nextInt()
-            if (id < dishes.size){
-                curDishes.add(dishes[id])
+            if (id < dishDb.getListOfDishes().size){
+                curDishes.add(dishDb.getListOfDishes()[id])
             }
             else{
                 throw Exception("no dish with this id")
             }
         }
+        val order = Order(curDishes, OrderStatus.processing, user)
+        orderDb.addOrder(order)
+        val t = executorService.submit(
+            Runnable {
+                order.cooking()
+            }
+        )
 
     }
 
     override fun checkCurrentOrders(user: User) {
-        for(order in orders){
+        println("Список ваших заказов:")
+        for(order in orderDb.getListOfOrders()){
             if (order.User == user){
                 println(order)
+            }
+        }
+        var exit = true;
+        while (exit) {
+            println("1. Вернуться в меню")
+            println("2. Отменить заказ")
+            println("3. Добавить блюдо в существующий заказ")
+            println("Выберите действие:")
+
+            when (scanner.nextInt()) {
+                1 -> return
+                2 -> return
+                3 -> exit = false
             }
         }
     }
 
     override fun getListOfDishes() {
-        val listOfDishes = db.getListOfDishes()
+        val listOfDishes = dishDb.getListOfDishes()
         println("Список блюд:")
 
         for (dish in listOfDishes) {
             println(dish)
         }
-
     }
 
     override fun addDish() {
@@ -57,15 +79,15 @@ class DishDataBase() : ServiceInterface {
         val price = scanner.nextFloat()
         println("Введите сложность для блюда")
         val complexity = scanner.nextInt()
-        db.addDish(Dish(name, number, price, complexity))
+        dishDb.addDish(Dish(name, number, price, complexity))
     }
 
     override fun removeDish() {
         println("Введите номер блюда для удаления")
         getListOfDishes()
         val id = scanner.nextInt()
-        if (id < dishes.size) {
-            db.removeDish(id)
+        if (id < dishDb.getListOfDishes().size) {
+            dishDb.removeDish(id)
         } else {
             throw Exception("no element with this id")
         }
@@ -78,8 +100,8 @@ class DishDataBase() : ServiceInterface {
         println("Введите новую цену для блюда")
         getListOfDishes()
         val price = scanner.nextFloat()
-        if (id < dishes.size) {
-            db.changePrice(id, price)
+        if (id < dishDb.getListOfDishes().size) {
+            dishDb.changePrice(id, price)
         } else {
             throw Exception("no dish with this id")
         }
@@ -92,8 +114,8 @@ class DishDataBase() : ServiceInterface {
         println("Введите новую сложность для блюда")
         getListOfDishes()
         val complexity = scanner.nextInt()
-        if (id < dishes.size) {
-            db.changeComplexity(id, complexity)
+        if (id < dishDb.getListOfDishes().size) {
+            dishDb.changeComplexity(id, complexity)
         } else {
             throw Exception("no dish with this id")
         }
@@ -106,10 +128,11 @@ class DishDataBase() : ServiceInterface {
         println("Введите новое количество для блюда")
         getListOfDishes()
         val number = scanner.nextInt()
-        if (id < dishes.size) {
-            db.changeNumber(id, number)
+        if (id < dishDb.getListOfDishes().size) {
+            dishDb.changeNumber(id, number)
         } else {
             throw Exception("no dish with this id")
+            //return "ERROR: no user or album"
         }
     }
 }

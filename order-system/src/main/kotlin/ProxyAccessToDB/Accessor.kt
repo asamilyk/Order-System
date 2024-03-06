@@ -1,6 +1,7 @@
 package ProxyAccessToDB
 
 import AuthorizationSystem.User
+import java.util.concurrent.ExecutorService
 
 class Accessor(private var realService : DishDataBase, var role : Role) : ServiceInterface {
     var logger = Logger()
@@ -61,8 +62,8 @@ class Accessor(private var realService : DishDataBase, var role : Role) : Servic
             logger.writeMessageChange(false)
         }
     }
-    override fun createOrder(user: User){
-        realService.createOrder(user)
+    override fun createOrder(user: User, executorService: ExecutorService){
+        realService.createOrder(user, executorService)
     }
     override fun checkCurrentOrders(user: User){
         realService.checkCurrentOrders(user)

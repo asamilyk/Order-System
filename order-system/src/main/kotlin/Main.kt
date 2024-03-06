@@ -4,6 +4,8 @@ import ProxyAccessToDB.Accessor
 import ProxyAccessToDB.DishDataBase
 import ProxyAccessToDB.Role
 import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 fun login(userDatabase: UserDatabase, scanner: Scanner): User? {
     println("Введите логин:")
@@ -49,7 +51,7 @@ fun register(userDatabase: UserDatabase, scanner: Scanner) {
     println("Пользователь успешно зарегистрирован.")
 }
 
-fun startAuthentification() {
+fun startAuthentification(executorService: ExecutorService) {
     val userDatabase = UserDatabase()
     val usersFilePath = "movies.json"
     userDatabase.loadUserData(usersFilePath)
@@ -65,7 +67,7 @@ fun startAuthentification() {
             1 -> {
                 loggedInUser = login(userDatabase, scanner)
                 if (loggedInUser != null) {
-                    mainMenu(loggedInUser)
+                    mainMenu(loggedInUser, executorService)
                 }
             }
 
@@ -77,14 +79,14 @@ fun startAuthentification() {
     userDatabase.saveUserData(usersFilePath)
 }
 
-fun mainMenu(user: User) {
+fun mainMenu(user: User, executorService: ExecutorService) {
     val scanner = Scanner(System.`in`)
     val dishDataBase = DishDataBase()
     val accessor = Accessor(dishDataBase, user.role)
     var exit = true;
     while (exit) {
         println("1. Создать заказ")
-        println("2. Существующие заказы")
+        println("2. Действия с существующими заказами")
         println("3. Выход")
         if (user.role == Role.Admin) {
             println("4. Добавить блюдо")
@@ -97,7 +99,7 @@ fun mainMenu(user: User) {
         println("Выберите действие:")
 
         when (scanner.nextInt()) {
-            1 -> accessor.createOrder(user)
+            1 -> accessor.createOrder(user, executorService)
             2 -> accessor.checkCurrentOrders(user)
             4 -> accessor.addDish()
             5 -> accessor.removeDish()
@@ -112,7 +114,7 @@ fun mainMenu(user: User) {
 }
 
 fun main(args: Array<String>) {
-    startAuthentification()
-
-
+    val executorService = Executors.newCachedThreadPool()
+    startAuthentification(executorService)
+    executorService.shutdown()
 }
