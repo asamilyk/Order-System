@@ -19,7 +19,7 @@ class Service() : ServiceInterface {
         val curDishes = mutableListOf<Dish>()
         println("Введите количество блюд, которое вы хотите добавить в заказ")
         val number = scanner.nextInt()
-        println("Введите номера блюд, которые вы хотите добавить в заказ")
+        println("Введите через пробел номера блюд, которые вы хотите добавить в заказ")
         for(i in 1..number){
             val id = scanner.nextInt()
             if (id <= dishDb.getListOfDishes().size){
@@ -42,10 +42,12 @@ class Service() : ServiceInterface {
     override fun checkCurrentOrders(user: User) {
         println("Список ваших заказов:")
         var i = 1
+        println("---------------------------\n")
         for(order in orderDb.getListOfOrders()){
             if (order.User == user){
                 print("$i. ")
                 println(order)
+                println("---------------------------")
             }
             i++
         }
