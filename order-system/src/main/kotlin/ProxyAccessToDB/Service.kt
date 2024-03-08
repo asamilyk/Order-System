@@ -15,27 +15,42 @@ class Service() : ServiceInterface {
     val scanner = Scanner(System.`in`)
 
     override fun createOrder(user: User,executorService: ExecutorService) {
-        getListOfDishes()
-        val curDishes = mutableListOf<Dish>()
-        println("Введите количество блюд, которое вы хотите добавить в заказ")
-        val number = scanner.nextInt()
-        println("Введите через пробел номера блюд, которые вы хотите добавить в заказ")
-        for(i in 1..number){
-            val id = scanner.nextInt()
-            if (id <= dishDb.getListOfDishes().size){
-                curDishes.add(dishDb.getListOfDishes()[id-1])
+        while (true) {
+            getListOfDishes()
+            val curDishes = mutableListOf<Dish>()
+            println("Введите количество блюд, которое вы хотите добавить в заказ")
+            val number = readLine()?.toIntOrNull()
+            if (number == null){
+                println("Некорректный выбор. Попробуйте снова.")
+                continue
             }
-            else{
-                throw Exception("no dish with this id")
+            println("Введите через пробел номера блюд, которые вы хотите добавить в заказ")
+            var flag:Boolean = true
+            for (i in 1..number) {
+                val id =readLine()?.toIntOrNull()
+                if (id == null ){
+                    println("Некорректный выбор. Попробуйте снова.")
+                    flag = false;
+                    break;
+                }
+                if (id <= dishDb.getListOfDishes().size) {
+                    curDishes.add(dishDb.getListOfDishes()[id - 1])
+                } else {
+                    println("Некорректный выбор. Попробуйте снова.")
+                    break;
+                }
             }
+            if (!flag){
+                break;
+            }
+            val order = Order(curDishes, OrderStatus.processing, user)
+            orderDb.addOrder(order)
+            val t = executorService.submit(
+                Runnable {
+                    order.cooking()
+                }
+            )
         }
-        val order = Order(curDishes, OrderStatus.processing, user)
-        orderDb.addOrder(order)
-        val t = executorService.submit(
-            Runnable {
-                order.cooking()
-            }
-        )
 
     }
 

@@ -1,5 +1,6 @@
 package ProxyAccessToDB
 
+// Класс, методы которого можно раскомментировать при необходимости получать логи
 class Logger {
     fun writeMessageGet() {
         //println("user try to get list of dishes")
