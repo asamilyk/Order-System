@@ -90,7 +90,6 @@ fun startAuthentification(executorService: ExecutorService) {
 }
 
 fun mainMenu(user: User, executorService: ExecutorService) {
-    val scanner = Scanner(System.`in`)
     val dishDataBase = Service()
     val accessor = Accessor(dishDataBase, user.role)
 

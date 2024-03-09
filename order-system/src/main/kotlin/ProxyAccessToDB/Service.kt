@@ -58,16 +58,21 @@ class Service() : ServiceInterface {
         println("Список ваших заказов:")
         var i = 1
         println("---------------------------\n")
+        var flag: Boolean = true
         for(order in orderDb.getListOfOrders()){
             if (order.User == user){
                 print("$i. ")
                 println(order)
                 println("---------------------------")
+                flag = false
             }
             i++
         }
-        var exit = true;
-        while (exit) {
+        if (!flag){
+            println("У вас пока нет заказов")
+        }
+        val choice = readLine()?.toIntOrNull()
+        while (true) {
             println("1. Вернуться в меню")
             println("2. Отменить заказ")
             println("3. Добавить блюдо в существующий заказ")
@@ -76,7 +81,7 @@ class Service() : ServiceInterface {
             when (scanner.nextInt()) {
                 1 -> return
                 2 -> return
-                3 -> exit = false
+                3 -> break;
             }
         }
     }
