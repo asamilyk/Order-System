@@ -1,6 +1,8 @@
 import AuthorizationSystem.User
 import AuthorizationSystem.UserDatabase
 import Dish.Dish
+import Dish.DishDataBase
+import Order.OrderDataBase
 import ProxyAccessToDB.Accessor
 import ProxyAccessToDB.Role
 import ProxyAccessToDB.Service
@@ -55,15 +57,19 @@ fun register(userDatabase: UserDatabase, scanner: Scanner) {
 
 fun startAuthentification(executorService: ExecutorService) {
     val userDatabase = UserDatabase()
-    val usersFilePath = "movies.json"
+    val dishDatabase = DishDataBase()
+    val ordersDatabase = OrderDataBase()
+
+    val usersFilePath = "users.json"
+    val ordersFilePath = "orders.json"
+    val dishFilePath = "dish.json"
+
     userDatabase.loadUserData(usersFilePath)
+    dishDatabase.loadDishData(dishFilePath)
+    ordersDatabase.loadOrdersData(ordersFilePath)
+
     val scanner = Scanner(System.`in`)
     var loggedInUser: User? = null
-
-    //убрать!!
-    val user = User("1", "1", Role.Visitor)
-    user.setPassword("1")
-    userDatabase.addUser(user)
 
     // Начальное меню входа
     while (true) {
@@ -87,6 +93,8 @@ fun startAuthentification(executorService: ExecutorService) {
         }
     }
     userDatabase.saveUserData(usersFilePath)
+    ordersDatabase.saveOrdersData(ordersFilePath)
+    dishDatabase.saveDishData(dishFilePath)
 }
 
 fun mainMenu(user: User, executorService: ExecutorService) {

@@ -23,11 +23,11 @@ class UserDatabase {
 
     // Функция для загрузки данных о пользователях из JSON файлов
     fun loadUserData(usersFilePath: String) {
-        return try {
+        users = try {
             val usersJson = File(usersFilePath).readText()
-            val movies = Json.decodeFromString<HashMap<String, User>>(usersJson)
-        } catch (e: Exception) {
-            users = HashMap<String, User>()
+            Json.decodeFromString<HashMap<String, User>>(usersJson)
+        } catch (e:Exception) {
+            HashMap<String, User>()
         }
     }
 }

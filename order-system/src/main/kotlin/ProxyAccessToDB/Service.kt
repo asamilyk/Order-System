@@ -2,7 +2,7 @@ package ProxyAccessToDB
 
 import AuthorizationSystem.User
 import Dish.Dish
-import Dish.DishDataBaseService
+import Dish.DishDataBase
 import Order.Order
 import Order.OrderDataBase
 import Order.OrderStatus
@@ -10,7 +10,7 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 
 class Service() : ServiceInterface {
-    var dishDb = DishDataBaseService()
+    var dishDb = DishDataBase()
     var orderDb = OrderDataBase()
     val scanner = Scanner(System.`in`)
 
@@ -121,7 +121,7 @@ class Service() : ServiceInterface {
 
                 }
                 val dish = dishDb.dishes[dishId-1]
-                dishDb.addDish(dish)
+                orderDb.addDish(id, dish)
                 println("Блюдо добавлено")
             }
             else{
