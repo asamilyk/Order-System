@@ -1,6 +1,6 @@
+
 import AuthorizationSystem.User
 import AuthorizationSystem.UserDatabase
-import Dish.Dish
 import Dish.DishDataBase
 import Order.OrderDataBase
 import ProxyAccessToDB.Accessor
@@ -83,7 +83,7 @@ fun startAuthentification(executorService: ExecutorService) {
             1 -> {
                 loggedInUser = login(userDatabase, scanner)
                 if (loggedInUser != null) {
-                    mainMenu(loggedInUser, executorService)
+                    mainMenu(loggedInUser, executorService, dishDatabase, ordersDatabase)
                 }
             }
 
@@ -97,18 +97,11 @@ fun startAuthentification(executorService: ExecutorService) {
     dishDatabase.saveDishData(dishFilePath)
 }
 
-fun mainMenu(user: User, executorService: ExecutorService) {
-    val dishDataBase = Service()
-    val accessor = Accessor(dishDataBase, user.role)
-
-    //убрать!!
-    var dish1 = Dish("a", 1, 1.0f, 1)
-    var dish2 = Dish("b", 1, 1.0f, 1)
-    dishDataBase.dishDb.dishes.add(dish1)
-    dishDataBase.dishDb.dishes.add(dish2)
+fun mainMenu(user: User, executorService: ExecutorService, dishDataBase: DishDataBase, orderDataBase: OrderDataBase) {
+    val service = Service(dishDataBase, orderDataBase)
+    val accessor = Accessor(service, user.role)
 
     // меню для выбора действия
-
     while (true) {
         println("1. Создать заказ")
         println("2. Действия с существующими заказами")

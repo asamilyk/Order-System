@@ -9,10 +9,9 @@ import Order.OrderStatus
 import java.util.*
 import java.util.concurrent.ExecutorService
 
-class Service() : ServiceInterface {
-    var dishDb = DishDataBase()
-    var orderDb = OrderDataBase()
-    val scanner = Scanner(System.`in`)
+class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
+    var DishDb = dishDb
+    var OrderDb = orderDb
 
     override fun createOrder(user: User, executorService: ExecutorService) {
         while (true) {
@@ -33,8 +32,8 @@ class Service() : ServiceInterface {
                     flag = false;
                     break;
                 }
-                if (id <= dishDb.getListOfDishes().size) {
-                    curDishes.add(dishDb.getListOfDishes()[id - 1])
+                if (id <= DishDb.getListOfDishes().size) {
+                    curDishes.add(DishDb.getListOfDishes()[id - 1])
                 } else {
                     println("Некорректный выбор. Попробуйте снова.")
                     break;
@@ -44,7 +43,7 @@ class Service() : ServiceInterface {
                 break;
             }
             val order = Order(curDishes, OrderStatus.processing, user)
-            orderDb.addOrder(order)
+            OrderDb.addOrder(order)
             val t = executorService.submit(
                 Runnable {
                     order.cooking()
@@ -60,7 +59,7 @@ class Service() : ServiceInterface {
         var i = 1
         println("---------------------------\n")
         var flag: Boolean = true
-        for (order in orderDb.getListOfOrders()) {
+        for (order in OrderDb.getListOfOrders()) {
             if (order.User == user) {
                 print("$i. ")
                 println(order)
@@ -88,7 +87,7 @@ class Service() : ServiceInterface {
     }
 
     override fun getListOfDishes() {
-        val listOfDishes = dishDb.getListOfDishes()
+        val listOfDishes = DishDb.getListOfDishes()
         println("Список блюд:")
 
         var i = 1
@@ -105,7 +104,7 @@ class Service() : ServiceInterface {
             println("Некорректный ввод")
             return
         }
-        val order = orderDb.getOrder(id)
+        val order = OrderDb.getOrder(id)
         if (id < order.Dishes.size) {
             if (order.Status == OrderStatus.processing){
                 getListOfDishes()
@@ -115,13 +114,13 @@ class Service() : ServiceInterface {
                     println("Некорректный ввод")
                     return
                 }
-                if (dishId >= dishDb.dishes.size) {
+                if (dishId >= DishDb.dishes.size) {
                     println("Блюда с таким номером не существует")
                     return
 
                 }
-                val dish = dishDb.dishes[dishId-1]
-                orderDb.addDish(id, dish)
+                val dish = DishDb.dishes[dishId-1]
+                OrderDb.addDish(id, dish)
                 println("Блюдо добавлено")
             }
             else{
@@ -156,7 +155,7 @@ class Service() : ServiceInterface {
             println("Некорректный ввод")
             return
         }
-        dishDb.addDish(Dish(name, number, price, complexity))
+        DishDb.addDish(Dish(name, number, price, complexity))
     }
 
     override fun removeDish() {
@@ -167,8 +166,8 @@ class Service() : ServiceInterface {
             println("Некорректный ввод")
             return
         }
-        if (id < dishDb.getListOfDishes().size) {
-            dishDb.removeDish(id)
+        if (id < DishDb.getListOfDishes().size) {
+            DishDb.removeDish(id)
             println("Блюдо удалено")
         } else {
             println("Блюда с таким номером не существует")
@@ -179,36 +178,42 @@ class Service() : ServiceInterface {
     override fun changePrice() {
         println("Введите номер блюда для изменения цены")
         getListOfDishes()
-        val id = scanner.nextInt()
+        val id = readLine()?.toIntOrNull()
+        if (id == null) {
+            println("Некорректный ввод")
+            return
+        }
         println("Введите новую цену для блюда")
-        getListOfDishes()
         val price = readLine()?.toFloatOrNull()
         if (price == null) {
             println("Некорректный ввод")
             return
         }
-        if (id < dishDb.getListOfDishes().size) {
-            dishDb.changePrice(id, price)
+        if (id < DishDb.getListOfDishes().size) {
+            DishDb.changePrice(id, price)
         } else {
-            throw Exception("no dish with this id")
+            println("Блюда с таким номером не существует")
         }
     }
 
     override fun changeComplexity() {
         println("Введите номер блюда для изменения сложности приготовления")
         getListOfDishes()
-        val id = scanner.nextInt()
+        val id = readLine()?.toIntOrNull()
+        if (id == null) {
+            println("Некорректный ввод")
+            return
+        }
         println("Введите новую сложность для блюда")
-        getListOfDishes()
         val complexity = readLine()?.toIntOrNull()
         if (complexity == null) {
             println("Некорректный ввод")
             return
         }
-        if (id < dishDb.getListOfDishes().size) {
-            dishDb.changeComplexity(id, complexity)
+        if (id < DishDb.getListOfDishes().size) {
+            DishDb.changeComplexity(id, complexity)
         } else {
-            throw Exception("no dish with this id")
+            println("Блюда с таким номером не существует")
         }
     }
 
@@ -219,10 +224,10 @@ class Service() : ServiceInterface {
             println("Некорректный ввод")
             return
         }
-        val order = orderDb.getOrder(id)
+        val order = OrderDb.getOrder(id)
         if (id < order.Dishes.size) {
             if (order.Status == OrderStatus.processing ||order.Status == OrderStatus.preparing ){
-                orderDb.removeOrder(id)
+                OrderDb.removeOrder(id)
                 println("Заказ удален")
             }
 
@@ -238,15 +243,21 @@ class Service() : ServiceInterface {
     override fun changeNumber() {
         println("Введите номер блюда для изменения количества")
         getListOfDishes()
-        val id = scanner.nextInt()
+        val id = readLine()?.toIntOrNull()
+        if (id == null) {
+            println("Некорректный ввод")
+            return
+        }
         println("Введите новое количество для блюда")
-        getListOfDishes()
-        val number = scanner.nextInt()
-        if (id < dishDb.getListOfDishes().size) {
-            dishDb.changeNumber(id, number)
+        val number = readLine()?.toIntOrNull()
+        if (number == null) {
+            println("Некорректный ввод")
+            return
+        }
+        if (id < DishDb.getListOfDishes().size) {
+            DishDb.changeNumber(id, number)
         } else {
-            throw Exception("no dish with this id")
-            //return "ERROR: no user or album"
+            println("Блюда с таким номером не существует")
         }
     }
 }
