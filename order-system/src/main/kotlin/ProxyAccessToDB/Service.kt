@@ -14,21 +14,21 @@ class Service() : ServiceInterface {
     var orderDb = OrderDataBase()
     val scanner = Scanner(System.`in`)
 
-    override fun createOrder(user: User,executorService: ExecutorService) {
+    override fun createOrder(user: User, executorService: ExecutorService) {
         while (true) {
             getListOfDishes()
             val curDishes = mutableListOf<Dish>()
             println("Введите количество блюд, которое вы хотите добавить в заказ")
             val number = readLine()?.toIntOrNull()
-            if (number == null){
+            if (number == null) {
                 println("Некорректный выбор. Попробуйте снова.")
                 continue
             }
             println("Введите через пробел номера блюд, которые вы хотите добавить в заказ")
-            var flag:Boolean = true
+            var flag: Boolean = true
             for (i in 1..number) {
-                val id =readLine()?.toIntOrNull()
-                if (id == null ){
+                val id = readLine()?.toIntOrNull()
+                if (id == null) {
                     println("Некорректный выбор. Попробуйте снова.")
                     flag = false;
                     break;
@@ -40,7 +40,7 @@ class Service() : ServiceInterface {
                     break;
                 }
             }
-            if (!flag){
+            if (!flag) {
                 break;
             }
             val order = Order(curDishes, OrderStatus.processing, user)
@@ -54,13 +54,14 @@ class Service() : ServiceInterface {
 
     }
 
+
     override fun checkCurrentOrders(user: User) {
         println("Список ваших заказов:")
         var i = 1
         println("---------------------------\n")
         var flag: Boolean = true
-        for(order in orderDb.getListOfOrders()){
-            if (order.User == user){
+        for (order in orderDb.getListOfOrders()) {
+            if (order.User == user) {
                 print("$i. ")
                 println(order)
                 println("---------------------------")
@@ -68,7 +69,7 @@ class Service() : ServiceInterface {
             }
             i++
         }
-        if (!flag){
+        if (!flag) {
             println("У вас пока нет заказов")
         }
         val choice = readLine()?.toIntOrNull()
@@ -78,10 +79,10 @@ class Service() : ServiceInterface {
             println("3. Добавить блюдо в существующий заказ")
             println("Выберите действие:")
 
-            when (scanner.nextInt()) {
-                1 -> return
-                2 -> return
-                3 -> break;
+            when (choice) {
+                1 -> break
+                2 -> removeOrder()
+                3 -> addDishToOrder();
             }
         }
     }
@@ -97,29 +98,83 @@ class Service() : ServiceInterface {
             i++
         }
     }
+    fun addDishToOrder(){
+        println("Введите номер заказа для добавления блюда")
+        val id = readLine()?.toIntOrNull()
+        if (id == null) {
+            println("Некорректный ввод")
+            return
+        }
+        val order = orderDb.getOrder(id)
+        if (id < order.Dishes.size) {
+            if (order.Status == OrderStatus.processing){
+                getListOfDishes()
+                println("Введите номер блюда для добавления блюда")
+                val dishId = readLine()?.toIntOrNull()
+                if (dishId == null) {
+                    println("Некорректный ввод")
+                    return
+                }
+                if (dishId >= dishDb.dishes.size) {
+                    println("Блюда с таким номером не существует")
+                    return
 
+                }
+                val dish = dishDb.dishes[dishId-1]
+                dishDb.addDish(dish)
+                println("Блюдо добавлено")
+            }
+            else{
+                println("Заказ уже начали готовить, добавить блюда нельзя")
+            }
+
+        } else {
+            println("Заказа с таким номером не существует")
+        }
+    }
     override fun addDish() {
         println("Введите название блюда")
         val name = scanner.next()
         println("Введите количество для блюда")
-        val number = scanner.nextInt()
+
+        val number = readLine()?.toIntOrNull()
+        if (number == null) {
+            println("Некорректный ввод")
+            return
+        }
+
         println("Введите цену для блюда")
-        val price = scanner.nextFloat()
-        println("Введите сложность для блюда")
-        val complexity = scanner.nextInt()
+        val price = readLine()?.toFloatOrNull()
+        if (price == null) {
+            println("Некорректный ввод")
+            return
+        }
+
+        println("Введите сложность приготовления для блюда")
+        val complexity = readLine()?.toIntOrNull()
+        if (complexity == null) {
+            println("Некорректный ввод")
+            return
+        }
         dishDb.addDish(Dish(name, number, price, complexity))
     }
 
     override fun removeDish() {
         println("Введите номер блюда для удаления")
         getListOfDishes()
-        val id = scanner.nextInt()
+        val id = readLine()?.toIntOrNull()
+        if (id == null) {
+            println("Некорректный ввод")
+            return
+        }
         if (id < dishDb.getListOfDishes().size) {
             dishDb.removeDish(id)
+            println("Блюдо удалено")
         } else {
-            throw Exception("no element with this id")
+            println("Блюда с таким номером не существует")
         }
     }
+
 
     override fun changePrice() {
         println("Введите номер блюда для изменения цены")
@@ -127,7 +182,11 @@ class Service() : ServiceInterface {
         val id = scanner.nextInt()
         println("Введите новую цену для блюда")
         getListOfDishes()
-        val price = scanner.nextFloat()
+        val price = readLine()?.toFloatOrNull()
+        if (price == null) {
+            println("Некорректный ввод")
+            return
+        }
         if (id < dishDb.getListOfDishes().size) {
             dishDb.changePrice(id, price)
         } else {
@@ -141,11 +200,38 @@ class Service() : ServiceInterface {
         val id = scanner.nextInt()
         println("Введите новую сложность для блюда")
         getListOfDishes()
-        val complexity = scanner.nextInt()
+        val complexity = readLine()?.toIntOrNull()
+        if (complexity == null) {
+            println("Некорректный ввод")
+            return
+        }
         if (id < dishDb.getListOfDishes().size) {
             dishDb.changeComplexity(id, complexity)
         } else {
             throw Exception("no dish with this id")
+        }
+    }
+
+    fun removeOrder() {
+        println("Введите номер заказа для удаления")
+        val id = readLine()?.toIntOrNull()
+        if (id == null) {
+            println("Некорректный ввод")
+            return
+        }
+        val order = orderDb.getOrder(id)
+        if (id < order.Dishes.size) {
+            if (order.Status == OrderStatus.processing ||order.Status == OrderStatus.preparing ){
+                orderDb.removeOrder(id)
+                println("Заказ удален")
+            }
+
+            else{
+                println("Заказ уже готов, отменить нельзя")
+                return
+            }
+        } else {
+            println("Заказа с таким номером не существует")
         }
     }
 

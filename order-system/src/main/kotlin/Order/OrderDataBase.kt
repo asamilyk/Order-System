@@ -15,6 +15,9 @@ class OrderDataBase {
     fun removeOrder(id: Int) {
         orders.removeAt(id-1)
     }
+    fun getOrder(id:Int):Order{
+        return orders[id-1]
+    }
     fun addDish(orderId: Int, dish: Dish){
         orders[orderId-1].Dishes.add(dish)
     }
