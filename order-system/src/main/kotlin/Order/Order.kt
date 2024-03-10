@@ -25,7 +25,7 @@ class Order(var dishes: MutableList<Dish>, var status: OrderStatus, var user: Us
         var str = "Статус: $status, стоимость: $cost, блюда:\n";
         var i = 1
         for(dish in dishes){
-            str += "$i. ${dish}+\n"
+            str += "$i. ${dish}\n"
             i++
         }
         return str

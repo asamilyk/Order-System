@@ -181,7 +181,7 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
             if (id <= DishDb.getListOfDishes().size) {
                 if (DishDb.getListOfDishes()[id - 1].number > 0) {
                     curDishes.add(DishDb.getListOfDishes()[id - 1])
-                    DishDb.getListOfDishes()[id - 1].complexity--;
+                    DishDb.getListOfDishes()[id - 1].number--;
                 } else {
                     println("Блюдо $id закочилось")
                     println("--------------------")
@@ -195,6 +195,8 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
         }
         val order = Order(curDishes, OrderStatus.processing, user)
         OrderDb.addOrder(order)
+        println("Заказ создан")
+        println("------------")
         statisticsService.plusOrder(order)
         executorService.submit(
             Runnable {
@@ -268,7 +270,7 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
 
         println("Для того, чтобы оставить отзыв, введите 1, для выхода введите любое другое значение")
         val answer = readLine()
-        if (answer === "1") {
+        if (answer == "1") {
             feedback(order)
         }
 
