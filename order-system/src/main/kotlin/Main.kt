@@ -122,7 +122,7 @@ fun mainMenu(user: User, executorService: ExecutorService, dishDataBase: DishDat
             println("6. Поменять цену существующего блюда")
             println("7. Поменять количество существующего блюда")
             println("8. Поменять сложность существующего блюда")
-            println("9. Посмотреть статистику")
+            println("9. Посмотреть статистику по заказам и отзывам")
         }
 
         println("Выберите действие:")
