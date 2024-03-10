@@ -8,9 +8,11 @@ import Order.OrderDataBase
 import Order.OrderStatus
 import java.util.concurrent.ExecutorService
 
+
 class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
     var DishDb = dishDb
     var OrderDb = orderDb
+    var money = 0.0;
 
     override fun createOrder(user: User, executorService: ExecutorService) {
         getListOfDishes()
@@ -22,13 +24,11 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
             return
         }
         println("Введите через пробел номера блюд, которые вы хотите добавить в заказ")
-        var flag: Boolean = true
         for (i in 1..number) {
             val id = readLine()?.toIntOrNull()
             if (id == null) {
                 println("Некорректный выбор. Попробуйте снова.")
-                flag = false;
-                break;
+                return
             }
             if (id <= DishDb.getListOfDishes().size) {
                 if (DishDb.getListOfDishes()[id - 1].number > 0) {
@@ -36,51 +36,62 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
                     DishDb.getListOfDishes()[id - 1].complexity--;
                 } else {
                     println("Блюдо $id закочилось")
-                    flag = false;
+                    return
                 }
             } else {
                 println("Некорректный выбор. Попробуйте снова.")
-                break;
+                return;
             }
-        }
-        if (!flag) {
-            return;
         }
         val order = Order(curDishes, OrderStatus.processing, user)
         OrderDb.addOrder(order)
-        val t = executorService.submit(
+        executorService.submit(
             Runnable {
                 order.cooking()
             }
         )
 
     }
-    fun payOrder(){
-        println("Введите номер заказа для добавления блюда")
+    fun payOrder(user:User){
+        println("Список ваших заказов:")
+        val orders = OrderDb.getListOfUserOrders(user)
+        if (orders.isEmpty()) {
+            println("У вас пока нет заказов")
+            return
+        }
+        else{
+            for(order in orders){
+                println(order)
+            }
+        }
+        println("Введите номер заказа для оплаты")
         val id = readLine()?.toIntOrNull()
-        if (id == null) {
+        if (id == null || id > OrderDb.getListOfOrders().size ) {
             println("Некорректный ввод")
             return
         }
         val order = OrderDb.getOrder(id)
+        if (order.status == OrderStatus.ready){
+            order.status = OrderStatus.paid;
+            println("Оплата прошла успешно, списано ${order.cost} рублей")
+            money += order.cost;
+        }
+        else{
+            println("Оплата невозможна, заказ еще не готов или уже оплачен")
+        }
     }
 
     override fun checkCurrentOrders(user: User) {
         println("Список ваших заказов:")
-        var i = 1
-        println("---------------------------\n")
-        var flag: Boolean = true
-        for (order in OrderDb.getListOfOrders()) {
-            if (order.user == user) {
-                print("$i. ")
-                println(order)
-                println("---------------------------")
-                flag = false
-            }
-            i++
-        }
-        if (!flag) {
+        val orders = OrderDb.getListOfUserOrders(user)
+        if (orders.isEmpty()) {
             println("У вас пока нет заказов")
+            return
+        }
+        else{
+            for(order in orders){
+                println(order)
+            }
         }
         val choice = readLine()?.toIntOrNull()
         while (true) {
@@ -91,10 +102,11 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
             println("Выберите действие:")
 
             when (choice) {
-                1 -> break
-                2 -> removeOrder()
-                3 -> addDishToOrder();
-                4 -> payOrder();
+                1 -> return
+                2 -> removeOrder(user)
+                3 -> addDishToOrder(user);
+                4 -> payOrder(user);
+                else -> return;
             }
         }
     }
@@ -111,15 +123,16 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
         }
     }
 
-    fun addDishToOrder() {
+    fun addDishToOrder(user:User) {
+
         println("Введите номер заказа для добавления блюда")
         val id = readLine()?.toIntOrNull()
-        if (id == null) {
+        if (id == null || id > OrderDb.getListOfOrders().size) {
             println("Некорректный ввод")
             return
         }
         val order = OrderDb.getOrder(id)
-        if (id < order.dishes.size) {
+        if (id <= order.dishes.size) {
             if (order.status == OrderStatus.processing) {
                 getListOfDishes()
                 println("Введите номер блюда для добавления блюда")
@@ -240,13 +253,25 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
         }
     }
 
-    fun removeOrder() {
+    fun removeOrder(user: User) {
+        println("Список ваших заказов:")
+        val orders = OrderDb.getListOfUserOrders(user)
+        if (orders.isEmpty()) {
+            println("У вас пока нет заказов")
+            return
+        }
+        else{
+            for(order in orders){
+                println(order)
+            }
+        }
         println("Введите номер заказа для удаления")
         val id = readLine()?.toIntOrNull()
-        if (id == null) {
+        if (id == null || id > OrderDb.getListOfOrders().size) {
             println("Некорректный ввод")
             return
         }
+
         val order = OrderDb.getOrder(id)
         if (id <= order.dishes.size) {
             if (order.status == OrderStatus.processing || order.status == OrderStatus.preparing) {

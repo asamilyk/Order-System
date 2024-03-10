@@ -100,6 +100,7 @@ fun mainMenu(user: User, executorService: ExecutorService, dishDataBase: DishDat
 
     // меню для выбора действия
     while (true) {
+        println("0. Посмотреть меню")
         println("1. Создать заказ")
         println("2. Действия с существующими заказами")
         println("3. Выход")
@@ -114,6 +115,7 @@ fun mainMenu(user: User, executorService: ExecutorService, dishDataBase: DishDat
         println("Выберите действие:")
         val choice = readLine()?.toIntOrNull()
         when (choice) {
+            0 -> accessor.getListOfDishes()
             1 -> accessor.createOrder(user, executorService)
             2 -> accessor.checkCurrentOrders(user)
             4 -> accessor.addDish()
