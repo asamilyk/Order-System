@@ -8,7 +8,8 @@ class OrderDataBase {
     fun getListOfOrders(): List<Order> {
         return orders;
     }
-    fun getListOfUserOrders(user: User):List<Order>{
+
+    fun getListOfUserOrders(user: User): List<Order> {
         return getListOfOrders().filter { it.user == user }
     }
 
@@ -17,12 +18,14 @@ class OrderDataBase {
     }
 
     fun removeOrder(id: Int) {
-        orders.removeAt(id-1)
+        orders.removeAt(id - 1)
     }
-    fun getOrder(id:Int):Order{
-        return orders[id-1]
+
+    fun getOrder(id: Int): Order {
+        return orders[id - 1]
     }
-    fun addDish(order: Order, dish: Dish){
+
+    fun addDish(order: Order, dish: Dish) {
         orders.filter { it == order }[0].dishes.add(dish)
     }
 }

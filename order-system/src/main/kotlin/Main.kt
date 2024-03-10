@@ -1,4 +1,3 @@
-
 import AuthorizationSystem.User
 import AuthorizationSystem.UserDatabase
 import Dish.DishDataBase
@@ -104,7 +103,7 @@ fun mainMenu(user: User, executorService: ExecutorService, dishDataBase: DishDat
     val money = try {
         val dishJson = File(moneyFilePath).readText()
         Json.decodeFromString<Double>(dishJson)
-    } catch (e:Exception) {
+    } catch (e: Exception) {
         0.0
     }
     service.money = money

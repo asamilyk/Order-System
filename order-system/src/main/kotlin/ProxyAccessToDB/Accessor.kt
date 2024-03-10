@@ -3,10 +3,10 @@ package ProxyAccessToDB
 import AuthorizationSystem.User
 import java.util.concurrent.ExecutorService
 
-class Accessor(private var realService : Service, var role : Role) : ServiceInterface {
+class Accessor(private var realService: Service, var role: Role) : ServiceInterface {
     var logger = Logger()
 
-    fun checkAccess(role : Role) : Boolean {
+    fun checkAccess(role: Role): Boolean {
         if (role == Role.Admin) {
             return true
         }
@@ -32,7 +32,7 @@ class Accessor(private var realService : Service, var role : Role) : ServiceInte
             logger.writeMessageRemove(true)
             realService.removeDish()
         } else {
-            logger.writeMessageRemove( false)
+            logger.writeMessageRemove(false)
         }
     }
 
@@ -62,10 +62,12 @@ class Accessor(private var realService : Service, var role : Role) : ServiceInte
             logger.writeMessageChange(false)
         }
     }
-    override fun createOrder(user: User, executorService: ExecutorService){
+
+    override fun createOrder(user: User, executorService: ExecutorService) {
         realService.createOrder(user, executorService)
     }
-    override fun checkCurrentOrders(user: User){
+
+    override fun checkCurrentOrders(user: User) {
         realService.checkCurrentOrders(user)
     }
 

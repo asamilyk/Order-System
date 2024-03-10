@@ -6,18 +6,19 @@ class Logger {
         //println("user try to get list of dishes")
     }
 
-    fun writeMessageAdd(success : Boolean ) {
+    fun writeMessageAdd(success: Boolean) {
         //println("user try to add dish - . success: ${success} ")
     }
 
-    fun writeMessageRemove(success : Boolean) {
+    fun writeMessageRemove(success: Boolean) {
         //println("user try to remove dish. success: ${success} ")
     }
 
-    fun writeMessageChange(success : Boolean) {
+    fun writeMessageChange(success: Boolean) {
         //println("user try to change dish. success: ${success} ")
     }
-    fun writeMessageGetStatistics(success : Boolean) {
+
+    fun writeMessageGetStatistics(success: Boolean) {
         //println("user try to get statistics. success: ${success} ")
     }
 }

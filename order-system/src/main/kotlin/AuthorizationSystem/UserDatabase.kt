@@ -1,4 +1,5 @@
 package AuthorizationSystem
+
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -26,7 +27,7 @@ class UserDatabase {
         users = try {
             val usersJson = File(usersFilePath).readText()
             Json.decodeFromString<HashMap<String, User>>(usersJson)
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             HashMap<String, User>()
         }
     }

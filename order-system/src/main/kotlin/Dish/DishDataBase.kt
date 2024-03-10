@@ -16,19 +16,19 @@ class DishDataBase() {
     }
 
     fun removeDish(id: Int) {
-        dishes.removeAt(id-1)
+        dishes.removeAt(id - 1)
     }
 
     fun changeNumber(id: Int, number: Int) {
-        dishes[id-1].number = number
+        dishes[id - 1].number = number
     }
 
     fun changePrice(id: Int, price: Double) {
-        dishes[id-1].price = price
+        dishes[id - 1].price = price
     }
 
     fun changeComplexity(id: Int, complexity: Int) {
-        dishes[id-1].complexity = complexity
+        dishes[id - 1].complexity = complexity
     }
 
     // Функция для сохранения данных о блюдах в JSON файлы
@@ -43,7 +43,7 @@ class DishDataBase() {
         dishes = try {
             val dishJson = File(dishFilePath).readText()
             Json.decodeFromString<MutableList<Dish>>(dishJson)
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             mutableListOf<Dish>()
         }
     }
