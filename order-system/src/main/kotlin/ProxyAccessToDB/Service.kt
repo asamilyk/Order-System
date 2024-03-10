@@ -55,7 +55,15 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
         )
 
     }
-
+    fun payOrder(){
+        println("Введите номер заказа для добавления блюда")
+        val id = readLine()?.toIntOrNull()
+        if (id == null) {
+            println("Некорректный ввод")
+            return
+        }
+        val order = OrderDb.getOrder(id)
+    }
 
     override fun checkCurrentOrders(user: User) {
         println("Список ваших заказов:")
@@ -79,12 +87,14 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
             println("1. Вернуться в меню")
             println("2. Отменить заказ")
             println("3. Добавить блюдо в существующий заказ")
+            println("4. Оплатить заказ")
             println("Выберите действие:")
 
             when (choice) {
                 1 -> break
                 2 -> removeOrder()
                 3 -> addDishToOrder();
+                4 -> payOrder();
             }
         }
     }
@@ -153,7 +163,7 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
         }
 
         println("Введите цену для блюда")
-        val price = readLine()?.toFloatOrNull()
+        val price = readLine()?.toDoubleOrNull()
         if (price == null) {
             println("Некорректный ввод")
             return
@@ -195,7 +205,7 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
             return
         }
         println("Введите новую цену для блюда")
-        val price = readLine()?.toFloatOrNull()
+        val price = readLine()?.toDoubleOrNull()
         if (price == null) {
             println("Некорректный ввод")
             return

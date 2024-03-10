@@ -1,9 +1,6 @@
 package Order
 
 import Dish.Dish
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.File
 
 class OrderDataBase {
     private var orders = mutableListOf<Order>()
@@ -24,23 +21,4 @@ class OrderDataBase {
     fun addDish(orderId: Int, dish: Dish){
         orders[orderId-1].dishes.add(dish)
     }
-    // Функция для сохранения данных о заказах в JSON файлы
-    fun saveOrdersData(ordersFilePath: String) {
-        val ordersJson = Json.encodeToString(orders)
-        File(ordersFilePath).writeText(ordersJson)
-        println("Данные о заказах сохранены в файл: $ordersFilePath")
-    }
-
-    // Функция для загрузки данных о заказах из JSON файлов
-    fun loadOrdersData(ordersFilePath: String) {
-        orders = try {
-            val dishJson = File(ordersFilePath).readText()
-            Json.decodeFromString<MutableList<Order>>(dishJson)
-        } catch (e:Exception) {
-            mutableListOf<Order>()
-        }
-    }
-
-
-
 }

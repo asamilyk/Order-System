@@ -2,10 +2,10 @@ package Order
 
 import AuthorizationSystem.User
 import Dish.Dish
-import kotlinx.serialization.Serializable
 
-@Serializable
+
 class Order(var dishes: MutableList<Dish>, var status: OrderStatus, var user: User) {
+    var cost: Double = dishes.sumOf { it.price }
     fun cooking(){
         var complexity = 0;
         for(dish in dishes){
@@ -17,7 +17,7 @@ class Order(var dishes: MutableList<Dish>, var status: OrderStatus, var user: Us
         status = OrderStatus.ready
     }
     override fun toString(): String {
-        var str = "Статус: $status, блюда:\n";
+        var str = "Статус: $status, стоимость: $cost, блюда:\n";
         var i = 1
         for(dish in dishes){
             str += "$i. ${dish}+\n"

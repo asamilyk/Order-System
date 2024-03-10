@@ -23,7 +23,7 @@ class DishDataBase() {
         dishes[id-1].number = number
     }
 
-    fun changePrice(id: Int, price: Float) {
+    fun changePrice(id: Int, price: Double) {
         dishes[id-1].price = price
     }
 

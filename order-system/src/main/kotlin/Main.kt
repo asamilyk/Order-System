@@ -61,12 +61,10 @@ fun startAuthentification(executorService: ExecutorService) {
     val ordersDatabase = OrderDataBase()
 
     val usersFilePath = "users.json"
-    val ordersFilePath = "orders.json"
     val dishFilePath = "dish.json"
 
     userDatabase.loadUserData(usersFilePath)
     dishDatabase.loadDishData(dishFilePath)
-    ordersDatabase.loadOrdersData(ordersFilePath)
 
     val scanner = Scanner(System.`in`)
     var loggedInUser: User? = null
@@ -93,7 +91,6 @@ fun startAuthentification(executorService: ExecutorService) {
         }
     }
     userDatabase.saveUserData(usersFilePath)
-    ordersDatabase.saveOrdersData(ordersFilePath)
     dishDatabase.saveDishData(dishFilePath)
 }
 
