@@ -52,33 +52,32 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
         )
 
     }
-    fun payOrder(user:User){
-        println("Список ваших заказов:")
-        val orders = OrderDb.getListOfUserOrders(user)
+
+    fun payOrder(user: User) {
+        println("Список ваших заказов, доступных для оплаты:")
+        val orders = OrderDb.getListOfUserOrders(user).filter { it.status == OrderStatus.ready }
         if (orders.isEmpty()) {
-            println("У вас пока нет заказов")
+            println("У вас пока нет таких заказов")
             return
-        }
-        else{
-            for(order in orders){
+        } else {
+            var i = 1
+            for (order in orders) {
+                print("$i. ")
                 println(order)
+                i++
             }
         }
         println("Введите номер заказа для оплаты")
         val id = readLine()?.toIntOrNull()
-        if (id == null || id > OrderDb.getListOfOrders().size ) {
+        if (id == null || id > OrderDb.getListOfOrders().size) {
             println("Некорректный ввод")
             return
         }
-        val order = OrderDb.getOrder(id)
-        if (order.status == OrderStatus.ready){
-            order.status = OrderStatus.paid;
-            println("Оплата прошла успешно, списано ${order.cost} рублей")
-            money += order.cost;
-        }
-        else{
-            println("Оплата невозможна, заказ еще не готов или уже оплачен")
-        }
+        val order = orders[id-1]
+        order.status = OrderStatus.paid;
+        println("Оплата прошла успешно, списано ${order.cost} р.")
+        money += order.cost;
+
     }
 
     override fun checkCurrentOrders(user: User) {
@@ -87,20 +86,21 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
         if (orders.isEmpty()) {
             println("У вас пока нет заказов")
             return
-        }
-        else{
-            for(order in orders){
+        } else {
+            var i = 1
+            for (order in orders) {
+                print("$i. ")
                 println(order)
+                i++
             }
         }
-        val choice = readLine()?.toIntOrNull()
         while (true) {
             println("1. Вернуться в меню")
             println("2. Отменить заказ")
             println("3. Добавить блюдо в существующий заказ")
             println("4. Оплатить заказ")
             println("Выберите действие:")
-
+            val choice = readLine()?.toIntOrNull()
             when (choice) {
                 1 -> return
                 2 -> removeOrder(user)
@@ -123,8 +123,7 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
         }
     }
 
-    fun addDishToOrder(user:User) {
-
+    fun addDishToOrder(user: User) {
         println("Введите номер заказа для добавления блюда")
         val id = readLine()?.toIntOrNull()
         if (id == null || id > OrderDb.getListOfOrders().size) {
@@ -147,11 +146,10 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
 
                 }
                 val dish = DishDb.dishes[dishId - 1]
-                if(dish.number > 0) {
+                if (dish.number > 0) {
                     OrderDb.addDish(id, dish)
                     println("Блюдо добавлено")
-                }
-                else{
+                } else {
                     println("Блюдо закончилось")
                     return
                 }
@@ -259,10 +257,12 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
         if (orders.isEmpty()) {
             println("У вас пока нет заказов")
             return
-        }
-        else{
-            for(order in orders){
+        } else {
+            var i = 1
+            for (order in orders) {
+                print("$i. ")
                 println(order)
+                i++
             }
         }
         println("Введите номер заказа для удаления")
@@ -304,7 +304,7 @@ class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
             DishDb.changeNumber(id, number)
             println("Количество изменено")
         } else {
-            println("Блюда с таким номером не существует")
+            println("Блюдо с таким номером не существует")
         }
     }
 }
