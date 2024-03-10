@@ -6,50 +6,53 @@ import Dish.DishDataBase
 import Order.Order
 import Order.OrderDataBase
 import Order.OrderStatus
-import java.util.*
 import java.util.concurrent.ExecutorService
 
-class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
+class Service(dishDb: DishDataBase, orderDb: OrderDataBase) : ServiceInterface {
     var DishDb = dishDb
     var OrderDb = orderDb
 
     override fun createOrder(user: User, executorService: ExecutorService) {
-        while (true) {
-            getListOfDishes()
-            val curDishes = mutableListOf<Dish>()
-            println("Введите количество блюд, которое вы хотите добавить в заказ")
-            val number = readLine()?.toIntOrNull()
-            if (number == null) {
+        getListOfDishes()
+        val curDishes = mutableListOf<Dish>()
+        println("Введите количество блюд, которое вы хотите добавить в заказ")
+        val number = readLine()?.toIntOrNull()
+        if (number == null) {
+            println("Некорректный выбор.")
+            return
+        }
+        println("Введите через пробел номера блюд, которые вы хотите добавить в заказ")
+        var flag: Boolean = true
+        for (i in 1..number) {
+            val id = readLine()?.toIntOrNull()
+            if (id == null) {
                 println("Некорректный выбор. Попробуйте снова.")
-                continue
-            }
-            println("Введите через пробел номера блюд, которые вы хотите добавить в заказ")
-            var flag: Boolean = true
-            for (i in 1..number) {
-                val id = readLine()?.toIntOrNull()
-                if (id == null) {
-                    println("Некорректный выбор. Попробуйте снова.")
-                    flag = false;
-                    break;
-                }
-                if (id <= DishDb.getListOfDishes().size) {
-                    curDishes.add(DishDb.getListOfDishes()[id - 1])
-                } else {
-                    println("Некорректный выбор. Попробуйте снова.")
-                    break;
-                }
-            }
-            if (!flag) {
+                flag = false;
                 break;
             }
-            val order = Order(curDishes, OrderStatus.processing, user)
-            OrderDb.addOrder(order)
-            val t = executorService.submit(
-                Runnable {
-                    order.cooking()
+            if (id <= DishDb.getListOfDishes().size) {
+                if (DishDb.getListOfDishes()[id - 1].number > 0) {
+                    curDishes.add(DishDb.getListOfDishes()[id - 1])
+                    DishDb.getListOfDishes()[id - 1].complexity--;
+                } else {
+                    println("Блюдо $id закочилось")
+                    flag = false;
                 }
-            )
+            } else {
+                println("Некорректный выбор. Попробуйте снова.")
+                break;
+            }
         }
+        if (!flag) {
+            return;
+        }
+        val order = Order(curDishes, OrderStatus.processing, user)
+        OrderDb.addOrder(order)
+        val t = executorService.submit(
+            Runnable {
+                order.cooking()
+            }
+        )
 
     }
 
@@ -60,7 +63,7 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
         println("---------------------------\n")
         var flag: Boolean = true
         for (order in OrderDb.getListOfOrders()) {
-            if (order.User == user) {
+            if (order.user == user) {
                 print("$i. ")
                 println(order)
                 println("---------------------------")
@@ -97,7 +100,8 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
             i++
         }
     }
-    fun addDishToOrder(){
+
+    fun addDishToOrder() {
         println("Введите номер заказа для добавления блюда")
         val id = readLine()?.toIntOrNull()
         if (id == null) {
@@ -105,8 +109,8 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
             return
         }
         val order = OrderDb.getOrder(id)
-        if (id < order.Dishes.size) {
-            if (order.Status == OrderStatus.processing){
+        if (id < order.dishes.size) {
+            if (order.status == OrderStatus.processing) {
                 getListOfDishes()
                 println("Введите номер блюда для добавления блюда")
                 val dishId = readLine()?.toIntOrNull()
@@ -119,11 +123,16 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
                     return
 
                 }
-                val dish = DishDb.dishes[dishId-1]
-                OrderDb.addDish(id, dish)
-                println("Блюдо добавлено")
-            }
-            else{
+                val dish = DishDb.dishes[dishId - 1]
+                if(dish.number > 0) {
+                    OrderDb.addDish(id, dish)
+                    println("Блюдо добавлено")
+                }
+                else{
+                    println("Блюдо закончилось")
+                    return
+                }
+            } else {
                 println("Заказ уже начали готовить, добавить блюда нельзя")
             }
 
@@ -131,9 +140,10 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
             println("Заказа с таким номером не существует")
         }
     }
+
     override fun addDish() {
         println("Введите название блюда")
-        val name = scanner.next()
+        val name = readLine().toString()
         println("Введите количество для блюда")
 
         val number = readLine()?.toIntOrNull()
@@ -155,6 +165,7 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
             println("Некорректный ввод")
             return
         }
+        println("Блюдо успешно добавлено")
         DishDb.addDish(Dish(name, number, price, complexity))
     }
 
@@ -166,7 +177,7 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
             println("Некорректный ввод")
             return
         }
-        if (id < DishDb.getListOfDishes().size) {
+        if (id <= DishDb.getListOfDishes().size) {
             DishDb.removeDish(id)
             println("Блюдо удалено")
         } else {
@@ -189,8 +200,9 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
             println("Некорректный ввод")
             return
         }
-        if (id < DishDb.getListOfDishes().size) {
+        if (id <= DishDb.getListOfDishes().size) {
             DishDb.changePrice(id, price)
+            println("Цена изменена")
         } else {
             println("Блюда с таким номером не существует")
         }
@@ -210,8 +222,9 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
             println("Некорректный ввод")
             return
         }
-        if (id < DishDb.getListOfDishes().size) {
+        if (id <= DishDb.getListOfDishes().size) {
             DishDb.changeComplexity(id, complexity)
+            println("Сложность изменена")
         } else {
             println("Блюда с таким номером не существует")
         }
@@ -225,13 +238,11 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
             return
         }
         val order = OrderDb.getOrder(id)
-        if (id < order.Dishes.size) {
-            if (order.Status == OrderStatus.processing ||order.Status == OrderStatus.preparing ){
+        if (id <= order.dishes.size) {
+            if (order.status == OrderStatus.processing || order.status == OrderStatus.preparing) {
                 OrderDb.removeOrder(id)
                 println("Заказ удален")
-            }
-
-            else{
+            } else {
                 println("Заказ уже готов, отменить нельзя")
                 return
             }
@@ -254,8 +265,9 @@ class Service(dishDb:DishDataBase, orderDb:OrderDataBase) : ServiceInterface {
             println("Некорректный ввод")
             return
         }
-        if (id < DishDb.getListOfDishes().size) {
+        if (id <= DishDb.getListOfDishes().size) {
             DishDb.changeNumber(id, number)
+            println("Количество изменено")
         } else {
             println("Блюда с таким номером не существует")
         }

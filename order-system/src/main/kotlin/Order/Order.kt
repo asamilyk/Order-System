@@ -2,21 +2,24 @@ package Order
 
 import AuthorizationSystem.User
 import Dish.Dish
+import kotlinx.serialization.Serializable
 
-class Order(dishes: MutableList<Dish>, status: OrderStatus, user: User) {
-    var Dishes: MutableList<Dish> = dishes
-    var Status: OrderStatus = status
-    var User: User = user
+@Serializable
+class Order(var dishes: MutableList<Dish>, var status: OrderStatus, var user: User) {
     fun cooking(){
-        Thread.sleep((10000*Dishes.size).toLong());
-        Status = OrderStatus.preparing
-        Thread.sleep((10000*Dishes.size).toLong());
-        Status = OrderStatus.ready
+        var complexity = 0;
+        for(dish in dishes){
+            complexity += dish.complexity
+        }
+        Thread.sleep((10000*complexity).toLong());
+        status = OrderStatus.preparing
+        Thread.sleep((10000*complexity).toLong());
+        status = OrderStatus.ready
     }
     override fun toString(): String {
-        var str = "Статус: $Status, блюда:\n";
+        var str = "Статус: $status, блюда:\n";
         var i = 1
-        for(dish in Dishes){
+        for(dish in dishes){
             str += "$i. ${dish}+\n"
             i++
         }

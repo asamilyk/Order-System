@@ -1,12 +1,11 @@
 package Dish
 
-class Dish(name: String, number: Int, price: Float, complexity: Int) {
-    var Name: String = name
-    var Number: Int = number
-    var Price: Float = price
-    var Complexity: Int = complexity
+import kotlinx.serialization.Serializable
+
+@Serializable
+class Dish(var name: String, var number: Int, var price: Float, var complexity: Int) {
     override fun toString(): String {
-        return "Название: $Name, кол-во: $Number, цена: $Price, сложность: $Complexity"
+        return "Название: $name, кол-во: $number, цена: $price, сложность: $complexity"
     }
 
 }

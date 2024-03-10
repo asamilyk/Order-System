@@ -22,13 +22,13 @@ class OrderDataBase {
         return orders[id-1]
     }
     fun addDish(orderId: Int, dish: Dish){
-        orders[orderId-1].Dishes.add(dish)
+        orders[orderId-1].dishes.add(dish)
     }
     // Функция для сохранения данных о заказах в JSON файлы
     fun saveOrdersData(ordersFilePath: String) {
         val ordersJson = Json.encodeToString(orders)
         File(ordersFilePath).writeText(ordersJson)
-        println("Данные о блзаказах сохранены в файл: $ordersFilePath")
+        println("Данные о заказах сохранены в файл: $ordersFilePath")
     }
 
     // Функция для загрузки данных о заказах из JSON файлов
