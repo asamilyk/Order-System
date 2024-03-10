@@ -12,4 +12,5 @@ interface ServiceInterface {
     fun changeNumber()
     fun createOrder(user: User, executorService: ExecutorService)
     fun checkCurrentOrders(user: User)
+    fun getStatistics()
 }

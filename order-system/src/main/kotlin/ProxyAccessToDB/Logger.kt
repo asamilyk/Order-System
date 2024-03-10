@@ -17,4 +17,7 @@ class Logger {
     fun writeMessageChange(success : Boolean) {
         //println("user try to change dish. success: ${success} ")
     }
+    fun writeMessageGetStatistics(success : Boolean) {
+        //println("user try to get statistics. success: ${success} ")
+    }
 }

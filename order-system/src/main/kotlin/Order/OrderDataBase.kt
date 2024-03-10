@@ -22,7 +22,7 @@ class OrderDataBase {
     fun getOrder(id:Int):Order{
         return orders[id-1]
     }
-    fun addDish(orderId: Int, dish: Dish){
-        orders[orderId-1].dishes.add(dish)
+    fun addDish(order: Order, dish: Dish){
+        orders.filter { it == order }[0].dishes.add(dish)
     }
 }

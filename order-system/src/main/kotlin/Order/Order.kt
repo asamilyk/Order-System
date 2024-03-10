@@ -6,14 +6,18 @@ import Dish.Dish
 
 class Order(var dishes: MutableList<Dish>, var status: OrderStatus, var user: User) {
     var cost: Double = dishes.sumOf { it.price }
-    fun cooking(){
+    fun cooking(orderDb: OrderDataBase){
         var complexity = 0;
+        val time = 1000;
         for(dish in dishes){
             complexity += dish.complexity
         }
-        Thread.sleep((1000*complexity).toLong());
+        if (orderDb.getListOfUserOrders(user).size < 5){
+            Thread.sleep(time.toLong())
+        }
+        Thread.sleep((time*complexity).toLong());
         status = OrderStatus.preparing
-        Thread.sleep((1000*complexity).toLong());
+        Thread.sleep((time*complexity).toLong());
         status = OrderStatus.ready
     }
 

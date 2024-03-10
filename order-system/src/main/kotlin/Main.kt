@@ -122,6 +122,7 @@ fun mainMenu(user: User, executorService: ExecutorService, dishDataBase: DishDat
             println("6. Поменять цену существующего блюда")
             println("7. Поменять количество существующего блюда")
             println("8. Поменять сложность существующего блюда")
+            println("9. Посмотреть статистику")
         }
 
         println("Выберите действие:")
@@ -135,6 +136,7 @@ fun mainMenu(user: User, executorService: ExecutorService, dishDataBase: DishDat
             6 -> accessor.changePrice()
             7 -> accessor.changeNumber()
             8 -> accessor.changeComplexity()
+            9 -> accessor.getStatistics()
             3 -> break
             else -> println("Некорректный выбор. Попробуйте снова.")
         }

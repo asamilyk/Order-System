@@ -68,4 +68,13 @@ class Accessor(private var realService : Service, var role : Role) : ServiceInte
     override fun checkCurrentOrders(user: User){
         realService.checkCurrentOrders(user)
     }
+
+    override fun getStatistics() {
+        if (checkAccess(role)) {
+            logger.writeMessageChange(true)
+            realService.getStatistics()
+        } else {
+            logger.writeMessageGetStatistics(false)
+        }
+    }
 }
