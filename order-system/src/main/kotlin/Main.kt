@@ -6,6 +6,9 @@ import Order.OrderDataBase
 import ProxyAccessToDB.Accessor
 import ProxyAccessToDB.Role
 import ProxyAccessToDB.Service
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.io.File
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -96,6 +99,15 @@ fun startAuthentification(executorService: ExecutorService) {
 
 fun mainMenu(user: User, executorService: ExecutorService, dishDataBase: DishDataBase, orderDataBase: OrderDataBase) {
     val service = Service(dishDataBase, orderDataBase)
+    val moneyFilePath = "money.json"
+
+    val money = try {
+        val dishJson = File(moneyFilePath).readText()
+        Json.decodeFromString<Double>(dishJson)
+    } catch (e:Exception) {
+        0.0
+    }
+    service.money = money
     val accessor = Accessor(service, user.role)
 
     // меню для выбора действия
@@ -127,6 +139,11 @@ fun mainMenu(user: User, executorService: ExecutorService, dishDataBase: DishDat
             else -> println("Некорректный выбор. Попробуйте снова.")
         }
     }
+
+    val moneyJson = Json.encodeToString(service.money)
+    File(moneyJson).writeText(moneyJson)
+    println("Данные о выручке сохранены в файл: $moneyFilePath")
+    service.money
     return;
 }
 
